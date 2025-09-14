@@ -5,6 +5,9 @@
 
 A feature-rich command-line interface for DuckDuckGo search that brings the power of privacy-focused searching directly to your terminal. Whether you're a developer looking for quick documentation, a researcher gathering information, or someone who prefers the efficiency of command-line tools, this CLI has you covered.
 
+<!-- Demo GIF would go here in a real repository -->
+> **Note**: This tool works entirely in your terminal - no browser required! Perfect for server environments, automated scripts, or when you just want fast, private search results.
+
 ## Why Use DuckDuckGo CLI?
 
 - **Privacy First**: Built on DuckDuckGo's privacy-focused search engine
@@ -12,6 +15,7 @@ A feature-rich command-line interface for DuckDuckGo search that brings the powe
 - **Developer Friendly**: Export results in multiple formats for further processing
 - **Highly Configurable**: Filter, bookmark, and organize your searches
 - **Terminal Native**: Fits perfectly into any command-line workflow
+- **Zero Tracking**: No personal data collection or search history stored externally
 
 ## Quick Start
 
@@ -277,6 +281,56 @@ If you encounter issues:
 1. Check the [existing issues](../../issues) on GitHub
 2. Review the troubleshooting section above
 3. Create a new issue with details about your environment and the problem
+
+## Performance Tips
+
+- **Optimize result counts**: Use `--results` to limit output for faster searches
+- **Use filters early**: Apply `--filter` and `--exclude` to reduce processing time
+- **Export large datasets**: Use `--format json` for further processing with tools like `jq`
+- **Bookmark frequent searches**: Save common queries to avoid retyping
+
+## Advanced Usage
+
+### Combining with Other Tools
+
+```bash
+# Process results with jq
+ddg-cli search "api tutorials" --format json | jq '.[] | .title'
+
+# Count results
+ddg-cli search "python" --format json | jq '. | length'
+
+# Extract URLs only
+ddg-cli search "documentation" --format json | jq -r '.[].href'
+
+# Filter and pipe to other commands
+ddg-cli search "github repositories" --filter "python" --format csv | head -10
+```
+
+### Scripting Examples
+
+```bash
+#!/bin/bash
+# Daily tech news aggregator
+ddg-cli search "tech news $(date +'%Y')" --results 20 --format json > daily_tech.json
+
+# Research automation
+for topic in "kubernetes" "docker" "terraform"; do
+    ddg-cli search "$topic best practices" --format markdown --output "${topic}_practices.md"
+done
+```
+
+## API and Library Usage
+
+While primarily a CLI tool, the modular architecture makes it easy to import individual components:
+
+```python
+from src.search import search_duckduckgo
+from src.filter import filter_results
+
+results = search_duckduckgo("python programming", 10)
+filtered = filter_results(results, include="github.com")
+```
 
 ## Contributing
 
