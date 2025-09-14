@@ -11,7 +11,7 @@ from .export import export_results
 from .filter import filter_results
 from .utils import open_urls, download_content
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __all__ = [
     "search_duckduckgo",
     "display_results", 
