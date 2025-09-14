@@ -8,7 +8,9 @@ WORKDIR /app
 COPY . .
 
 # Install the project and its dependencies
-RUN pip install .
+RUN pip install --upgrade pip && \
+    pip install typing_extensions && \
+    pip install .
 
 # Set the entrypoint for the container
 ENTRYPOINT ["ddg-cli"]

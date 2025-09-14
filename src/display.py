@@ -11,9 +11,9 @@ def display_results(results):
         return
 
     for i, result in enumerate(results, 1):
-        print(f"{i}. {result["title"]}")
-        print(f"   URL: {result["href"]}")
-        print(f"   Snippet: {result["body"]}")
+        print(f"{i}. {result['title']}")
+        print(f"   URL: {result['href']}")
+        print(f"   Snippet: {result['body']}")
         print()
 
 def format_results(results, format_type):
@@ -24,8 +24,8 @@ def format_results(results, format_type):
         # Default to text format
         output = []
         for i, result in enumerate(results, 1):
-            output.append(f"{i}. {result["title"]}")
-            output.append(f"   URL: {result["href"]}")
-            output.append(f"   Snippet: {result["body"]}")
+            output.append(f"{i}. {result['title']}")
+            output.append(f"   URL: {result['href']}")
+            output.append(f"   Snippet: {result['body']}")
             output.append("")
         return "\n".join(output)

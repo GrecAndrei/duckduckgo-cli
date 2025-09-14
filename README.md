@@ -20,20 +20,17 @@ A feature-rich command-line interface for DuckDuckGo search that brings the powe
 ## Quick Start
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Make the script executable
-chmod +x ddgs
+# Install the package
+pip install .
 
 # Search for something
-PYTHONPATH=./src python3 ddgs search "python web scraping"
+ddg-cli search "python web scraping"
 
 # Get more results
-PYTHONPATH=./src python3 ddgs search "machine learning tutorials" --results 20
+ddg-cli search "machine learning tutorials" --results 20
 
 # Export to JSON for processing
-PYTHONPATH=./src python3 ddgs search "api documentation" --format json --output results.json
+ddg-cli search "api documentation" --format json --output results.json
 ```
 
 ## Installation
@@ -42,7 +39,7 @@ PYTHONPATH=./src python3 ddgs search "api documentation" --format json --output 
 - Python 3.8 or higher
 - pip package manager
 
-### Step-by-Step Installation
+### Method 1: Install with pip (Recommended)
 
 1. **Clone the repository**
    ```bash
@@ -50,18 +47,27 @@ PYTHONPATH=./src python3 ddgs search "api documentation" --format json --output 
    cd duckduckgo-cli
    ```
 
-2. **Install dependencies**
+2. **Install the package**
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
 
-3. **Set up the tool (optional)**
+3. **Start using the CLI**
    ```bash
-   chmod +x ddgs
-   ./setup.sh  # Creates system-wide symlink
+   ddg-cli search "your search query"
    ```
 
-After setup, you can use `ddg-cli` from anywhere in your terminal.
+### Method 2: Docker
+
+1. **Build the Docker image**
+   ```bash
+   docker build -t ddg-cli .
+   ```
+
+2. **Run searches in Docker**
+   ```bash
+   docker run ddg-cli search "hello world"
+   ```
 
 ## Core Features
 
@@ -228,8 +234,8 @@ This project is well-organized for easy maintenance and extension:
 
 ```
 duckduckgo-cli/
-├── ddgs                    # Main executable
-├── src/                    # Core modules
+├── duckduckgo_cli/         # Main package
+│   ├── main.py            # Main CLI entry point
 │   ├── search.py          # DuckDuckGo search integration
 │   ├── display.py         # Result formatting
 │   ├── history.py         # Search history management
@@ -239,7 +245,9 @@ duckduckgo-cli/
 │   ├── filter.py          # Result filtering
 │   └── utils.py           # Browser and download utilities
 ├── tests/                  # Test suite
-└── docs/                   # Additional documentation
+├── pyproject.toml         # Modern Python packaging
+├── Dockerfile             # Container configuration
+└── .github/workflows/     # CI/CD configuration
 ```
 
 ## Testing
@@ -247,11 +255,11 @@ duckduckgo-cli/
 Run the comprehensive test suite to ensure everything works correctly:
 
 ```bash
-# Run all tests
-PYTHONPATH=./src python3 tests/test_ddgs.py
+# Run all tests with pytest
+pytest
 
-# Or use make
-make test
+# Or run tests with verbose output
+pytest -v
 ```
 
 ## Troubleshooting
@@ -260,8 +268,8 @@ make test
 
 **"Module not found" errors**
 ```bash
-# Ensure PYTHONPATH is set correctly
-export PYTHONPATH="./src:$PYTHONPATH"
+# Make sure the package is installed
+pip install .
 ```
 
 **Network connectivity issues**
@@ -271,8 +279,8 @@ export PYTHONPATH="./src:$PYTHONPATH"
 
 **Permission denied on installation**
 ```bash
-# Make scripts executable
-chmod +x ddgs setup.sh install.sh
+# Install in user mode if needed
+pip install --user .
 ```
 
 ### Getting Help
@@ -325,8 +333,8 @@ done
 While primarily a CLI tool, the modular architecture makes it easy to import individual components:
 
 ```python
-from src.search import search_duckduckgo
-from src.filter import filter_results
+from duckduckgo_cli.search import search_duckduckgo
+from duckduckgo_cli.filter import filter_results
 
 results = search_duckduckgo("python programming", 10)
 filtered = filter_results(results, include="github.com")
