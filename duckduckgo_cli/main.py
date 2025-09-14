@@ -13,21 +13,30 @@ import configparser
 from datetime import datetime
 from pathlib import Path
 
-# Get the directory where this script is located
-SCRIPT_DIR = Path(__file__).parent.absolute()
-
-# Add the project src directory to the Python path
-sys.path.insert(0, str(SCRIPT_DIR / "src"))
-
-# Import our enhanced modules
-from search import search_duckduckgo
-from display import display_results, format_results
-from history import HistoryManager
-from bookmarks import BookmarkManager
-from config import ConfigManager
-from export import export_results
-from filter import filter_results
-from utils import open_urls, download_content
+# Try to import from installed package first, fallback to local development
+try:
+    # Import from package structure
+    from .search import search_duckduckgo
+    from .display import display_results, format_results
+    from .history import HistoryManager
+    from .bookmarks import BookmarkManager
+    from .config import ConfigManager
+    from .export import export_results
+    from .filter import filter_results
+    from .utils import open_urls, download_content
+except ImportError:
+    # Fallback for development - add src to path
+    SCRIPT_DIR = Path(__file__).parent.parent.absolute()
+    sys.path.insert(0, str(SCRIPT_DIR / "src"))
+    
+    from search import search_duckduckgo
+    from display import display_results, format_results
+    from history import HistoryManager
+    from bookmarks import BookmarkManager
+    from config import ConfigManager
+    from export import export_results
+    from filter import filter_results
+    from utils import open_urls, download_content
 
 def main():
     """Main function to handle command-line arguments and execute commands."""

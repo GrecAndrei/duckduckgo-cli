@@ -6,6 +6,7 @@ Test script for the enhanced ddgs tool
 
 import sys
 import os
+import pytest
 from pathlib import Path
 
 # Get the directory where this script is located and add src to path
@@ -13,53 +14,103 @@ SCRIPT_DIR = Path(__file__).parent.parent.absolute()
 sys.path.insert(0, str(SCRIPT_DIR / "src"))
 
 # Test imports
-try:
-    from search import search_duckduckgo
-    from display import display_results, format_results
-    from history import HistoryManager
-    from bookmarks import BookmarkManager
-    from config import ConfigManager
-    from export import export_results
-    from filter import filter_results
-    from utils import open_urls, download_content
-    
-    print("All modules imported successfully!")
-    
-    # Test search functionality
-    print("\nTesting search functionality...")
+from search import search_duckduckgo
+from display import display_results, format_results
+from history import HistoryManager
+from bookmarks import BookmarkManager
+from config import ConfigManager
+from export import export_results
+from filter import filter_results
+from utils import open_urls, download_content
+
+
+def test_imports():
+    """Test that all modules can be imported successfully."""
+    # If we reach this point, imports were successful
+    assert True
+
+
+def test_search_functionality():
+    """Test search functionality."""
     results = search_duckduckgo("Python programming", 5)
-    print(f"Found {len(results)} results")
+    assert len(results) > 0
+    assert len(results) <= 5
     
-    # Test display functionality
-    print("\nTesting display functionality...")
-    display_results(results[:2])  # Display first 2 results
+    # Check that results have expected structure
+    for result in results:
+        assert 'title' in result
+        assert 'href' in result
+        assert 'body' in result  # The actual field name is 'body', not 'snippet'
+
+
+def test_display_functionality():
+    """Test display functionality."""
+    # Create test results
+    test_results = [
+        {
+            'title': 'Test Title',
+            'href': 'https://example.com',
+            'body': 'Test body content'  # Use 'body' instead of 'snippet'
+        }
+    ]
     
-    # Test formatting
-    print("\nTesting JSON formatting...")
-    json_output = format_results(results[:2], 'json')
-    print(json_output[:100] + "..." if len(json_output) > 100 else json_output)
+    # Test that display_results doesn't crash
+    try:
+        display_results(test_results)
+        assert True
+    except Exception:
+        assert False, "display_results should not raise exceptions"
+
+
+def test_formatting():
+    """Test result formatting."""
+    test_results = [
+        {
+            'title': 'Test Title',
+            'href': 'https://example.com',
+            'body': 'Test body content'  # Use 'body' instead of 'snippet'
+        }
+    ]
     
-    # Test history manager
-    print("\nTesting history manager...")
+    json_output = format_results(test_results, 'json')
+    assert isinstance(json_output, str)
+    assert 'Test Title' in json_output
+
+
+def test_history_manager():
+    """Test history manager functionality."""
     history_manager = HistoryManager()
-    history_manager.add_to_history("Python programming", len(results))
-    print("Added search to history")
     
-    # Test bookmark manager
-    print("\nTesting bookmark manager...")
+    # Test adding to history
+    try:
+        history_manager.add_to_history("Python programming", 5)
+        assert True
+    except Exception:
+        assert False, "add_to_history should not raise exceptions"
+
+
+def test_bookmark_manager():
+    """Test bookmark manager functionality."""
     bookmark_manager = BookmarkManager()
-    bookmark_manager.add_bookmark("Python programming")
-    print("Added bookmark")
     
-    # Test configuration manager
-    print("\nTesting configuration manager...")
+    # Test adding bookmark
+    try:
+        bookmark_manager.add_bookmark("Python programming")
+        assert True
+    except Exception:
+        assert False, "add_bookmark should not raise exceptions"
+
+
+def test_configuration_manager():
+    """Test configuration manager."""
     config_manager = ConfigManager()
     config = config_manager.load_config()
-    print(f"Default results: {config.get('general', 'default_results')}")
     
-    print("\nAll tests passed!")
-    
-except Exception as e:
-    print(f"Error during testing: {e}")
-    import traceback
-    traceback.print_exc()
+    # Check that config has expected sections
+    assert config.has_section('general')
+    assert config.get('general', 'default_results') == '10'
+
+
+if __name__ == "__main__":
+    # If run directly, run tests with output
+    pytest.main([__file__, "-v"])
