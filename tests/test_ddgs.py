@@ -1,4 +1,4 @@
-#!/home/alex/Documents/ddg_search_env/bin/python3
+#!/usr/bin/env python3
 
 """
 Test script for the enhanced ddgs tool
@@ -6,9 +6,11 @@ Test script for the enhanced ddgs tool
 
 import sys
 import os
+from pathlib import Path
 
-# Add the project directory to the Python path
-sys.path.insert(0, '/home/alex/Documents/ddgs_enhanced/src')
+# Get the directory where this script is located and add src to path
+SCRIPT_DIR = Path(__file__).parent.parent.absolute()
+sys.path.insert(0, str(SCRIPT_DIR / "src"))
 
 # Test imports
 try:
