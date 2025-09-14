@@ -1,0 +1,155 @@
+#!/home/alex/Documents/ddg_search_env/bin/python3
+
+"""
+DuckDuckGo CLI
+A powerful command-line interface for searching DuckDuckGo with advanced features
+"""
+
+import sys
+import os
+import argparse
+import json
+import configparser
+from datetime import datetime
+from pathlib import Path
+
+# Add the project directory to the Python path
+sys.path.insert(0, '/home/alex/Documents/duckduckgo-cli/src')
+
+# Import our enhanced modules
+from search import search_duckduckgo
+from display import display_results, format_results
+from history import HistoryManager
+from bookmarks import BookmarkManager
+from config import ConfigManager
+from export import export_results
+from filter import filter_results
+from utils import open_urls, download_content
+
+def main():
+    """Main function to handle command-line arguments and execute commands."""
+    # Initialize managers
+    config_manager = ConfigManager()
+    history_manager = HistoryManager()
+    bookmark_manager = BookmarkManager()
+    
+    # Load configuration
+    config = config_manager.load_config()
+    
+    # Create the main parser
+    parser = argparse.ArgumentParser(
+        prog='ddg-cli',
+        description="DuckDuckGo CLI - A powerful command-line interface for searching DuckDuckGo",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  ddg-cli search "Python programming"
+  ddg-cli search "machine learning" --results 20
+  ddg-cli search "Python" --format json --output results.json
+  ddg-cli search "Python" --filter "github.com"
+  ddg-cli history list
+  ddg-cli bookmarks add "Python programming"
+        """
+    )
+    
+    # Create subparsers for the main commands
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+    
+    # Create the search command parser
+    search_parser = subparsers.add_parser('search', help='Search DuckDuckGo')
+    search_parser.add_argument('query', help='Search query')
+    search_parser.add_argument('-r', '--results', type=int, default=10, help='Maximum number of results to display')
+    search_parser.add_argument('-f', '--format', choices=['text', 'json', 'csv', 'xml', 'markdown'], default='text', help='Output format')
+    search_parser.add_argument('-o', '--output', help='Output file path')
+    search_parser.add_argument('--filter', help='Filter results by keyword or domain')
+    search_parser.add_argument('--exclude', help='Exclude results by keyword or domain')
+    search_parser.add_argument('--open', action='store_true', help='Open URLs in browser')
+    search_parser.add_argument('--download', action='store_true', help='Download content from URLs')
+    
+    # Create the history command parser
+    history_parser = subparsers.add_parser('history', help='Manage search history')
+    history_subparsers = history_parser.add_subparsers(dest='history_action')
+    history_subparsers.add_parser('list', help='List search history')
+    history_subparsers.add_parser('clear', help='Clear search history')
+    
+    # Create the bookmarks command parser
+    bookmarks_parser = subparsers.add_parser('bookmarks', help='Manage bookmarks')
+    bookmarks_subparsers = bookmarks_parser.add_subparsers(dest='bookmarks_action')
+    bookmarks_add = bookmarks_subparsers.add_parser('add', help='Add bookmark')
+    bookmarks_add.add_argument('bookmark_query', help='Query to bookmark')
+    bookmarks_subparsers.add_parser('list', help='List bookmarks')
+    bookmarks_subparsers.add_parser('clear', help='Clear bookmarks')
+    
+    # If no arguments provided, show help
+    if len(sys.argv) == 1:
+        parser.print_help()
+        return
+    
+    # Parse arguments
+    args = parser.parse_args()
+    
+    # Handle commands
+    if args.command == 'search':
+        # Perform search
+        print(f"Searching for: {args.query}")
+        results = search_duckduckgo(args.query, args.results)
+        
+        # Save to history
+        history_manager.add_to_history(args.query, len(results))
+        
+        # Apply filters if specified
+        if args.filter:
+            results = filter_results(results, include=args.filter)
+        if args.exclude:
+            results = filter_results(results, exclude=args.exclude)
+        
+        # Handle output
+        if args.output:
+            export_results(results, args.format, args.output)
+            print(f"Results exported to {args.output}")
+        else:
+            if args.format == 'text':
+                display_results(results)
+            else:
+                formatted = format_results(results, args.format)
+                print(formatted)
+        
+        # Handle URL actions
+        if args.open and results:
+            urls = [result['href'] for result in results]
+            open_urls(urls)
+        
+        if args.download and results:
+            urls = [result['href'] for result in results]
+            download_content(urls)
+    elif args.command == 'history':
+        if args.history_action == 'list':
+            history_manager.list_history()
+        elif args.history_action == 'clear':
+            history_manager.clear_history()
+    elif args.command == 'bookmarks':
+        if args.bookmarks_action == 'add':
+            bookmark_manager.add_bookmark(args.bookmark_query)
+        elif args.bookmarks_action == 'list':
+            bookmark_manager.list_bookmarks()
+        elif args.bookmarks_action == 'clear':
+            bookmark_manager.clear_bookmarks()
+    else:
+        # If no command specified, treat first argument as search query
+        if len(sys.argv) > 1:
+            query = sys.argv[1]
+            results_count = 10
+            if len(sys.argv) > 2 and sys.argv[2].isdigit():
+                results_count = int(sys.argv[2])
+            
+            print(f"Searching for: {query}")
+            results = search_duckduckgo(query, results_count)
+            
+            # Save to history
+            history_manager.add_to_history(query, len(results))
+            
+            # Display results
+            display_results(results)
+
+if __name__ == "__main__":
+    main()

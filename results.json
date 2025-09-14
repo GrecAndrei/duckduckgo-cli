@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Python (programming language)",
+    "href": "https://en.wikipedia.org/wiki/Python_(programming_language)",
+    "body": "Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation.Python is dynamically type-checked and garbage-collected. It supports multiple programming paradigms, including structured (particularly procedural), object-oriented and functional programming.Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language. Python 3.0, released in 2008, was a major revision not completely backward-compatible with earlier versions. Recent versions, such as Python 3.12, have added capabilites and keywords for typing (and more; e.g. increasing speed); helping with (optional) static typing. Currently only versions in the 3.x series are supported.Python consistently ranks as one of the most popular programming languages, and it has gained widespread use in the machine learning community. It is widely taught as an introductory programming language."
+  },
+  {
+    "title": "python - How to use pigpio to control a servo motor with a \u2026",
+    "href": "https://raspberrypi.stackexchange.com/questions/29480/how-to-use-pigpio-to-control-a-servo-motor-with-a-keyboard",
+    "body": "Apr 10, 2015 \u00b7 3 My aim is to be able to control a servo motor with my keyboard in a real time fashion using the python module of pigpio. That is, when I press say the 'w' key it rotates clockwise and when I press the 's' key anticlockwise. I'm using an RPi 2, a tower Pro Micro servo SG90 and have connected it to the PWM enabled pin 13 (BCM denotation)."
+  },
+  {
+    "title": "How to program a USB device with Debian/Python",
+    "href": "https://raspberrypi.stackexchange.com/questions/258/how-to-program-a-usb-device-with-debian-python",
+    "body": "Inline with this, there have already been some great examples online of people accessing the GPIO from Python. However, most off-the-shelf (rather than home brew) peripherals have USB interfaces. How does one go about accessing these using the standard Debian/Python card? Is there a Python library available, and a good tutorial?"
+  }
+]
